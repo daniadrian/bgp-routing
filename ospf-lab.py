@@ -72,7 +72,7 @@ class BGPTopo(Topo):
         if flags.verbose:
             setLogLevel('info')
         
-        config_path = "/home/USER/coba-iBGP/inter-domain-routing/frr-config/%(name)s"
+        config_path = "/home/USER/bgp-routing/frr-config/%(name)s"
         privateDirs = [('/var/log'),
                       ('/etc/frr', config_path),
                       ('/var/run'),
