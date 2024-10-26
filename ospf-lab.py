@@ -72,7 +72,7 @@ class BGPTopo(Topo):
         if flags.verbose:
             setLogLevel('info')
         
-        config_path = "/home/USER/bgp-routing/frr-config/%(name)s"
+        config_path = "/home/USER/bgp-routing2/bgp-routing/frr-config/%(name)s"
         privateDirs = [('/var/log'),
                       ('/etc/frr', config_path),
                       ('/var/run'),
@@ -95,6 +95,16 @@ class BGPTopo(Topo):
         R3b = self.addNode("R3b", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
         R3c = self.addNode("R3c", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
         R3d = self.addNode("R3d", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+
+        # # Switch
+        # S11 = self.addSwitch("S11", inNamespace=True)
+        # S22 = self.addSwitch("S22", inNamespace=True)
+        # S33 = self.addSwitch("S33", inNamespace=True)
+
+        # # Host
+        # C11= self.addHost('C11', ip="172.16.1.2/24", defaultRoute="via 172.16.1.1")
+        # C22= self.addHost('C22', ip="172.17.1.2/24", defaultRoute="via 172.17.1.1")
+        # C33= self.addHost('C33', ip="172.18.1.2/24", defaultRoute="via 172.18.1.1")
 
         # Internal links for AS1 (iBGP full mesh)
         self.addLink(R1a, R1b, intfName1="R1a-eth0", intfName2="R1b-eth0")
@@ -121,8 +131,20 @@ class BGPTopo(Topo):
         self.addLink(R3c, R3d, intfName1="R3c-eth1", intfName2="R3d-eth1")
 
         # # eBGP links between ASes
+        self.addLink(R1d, R2b, intfName1="R1d-eth2", intfName2="R2b-eth2")
+        self.addLink(R1a, R3a, intfName1="R1a-eth2", intfName2="R3a-eth2")
+        self.addLink(R2c, R3d, intfName1="R2c-eth2", intfName2="R3d-eth2")
         # self.addLink(R1c, R2a, intfName1="R1c-eth3", intfName2="R2a-eth3")  # AS1 - AS2
         # self.addLink(R2c, R3a, intfName1="R2c-eth3", intfName2="R3a-eth3")  # AS2 - AS3
+
+        # self.addLink(S11, R1b, intfName2="R1b-eth2")
+        # self.addLink(S11, C11)
+
+        # self.addLink(S22, R2a, intfName2="R2a-eth2")
+        # self.addLink(S22, C22)
+
+        # self.addLink(S33, R3c, intfName2="R3c-eth2")
+        # self.addLink(S33, C33)
 
         if flags.generateConfig or not Path.exists(Path(config_path % {"name": ""})):
             print("Generating configuration files...")
@@ -134,30 +156,30 @@ class BGPTopo(Topo):
 
         super().build(*args, **kwargs)
 
-    def add_bgp_configuration(self, config_file, router_name):
-        """Add BGP configuration based on router name"""
-        as_number = int(router_name[1])  # Extract AS number from router name
-        with open(config_file, 'a') as f:
-            f.write(f"""
-router bgp {64500 + as_number}
- bgp router-id {router_name}
- no bgp ebgp-requires-policy
-""")
-            # Add iBGP neighbors based on AS
-            if router_name[2] in ['a', 'b', 'c', 'd']:
-                for peer in ['a', 'b', 'c', 'd']:
-                    if peer != router_name[2]:
-                        f.write(f" neighbor R{as_number}{peer} remote-as {64500 + as_number}\n")
+#     def add_bgp_configuration(self, config_file, router_name):
+#         """Add BGP configuration based on router name"""
+#         as_number = int(router_name[1])  # Extract AS number from router name
+#         with open(config_file, 'a') as f:
+#             f.write(f"""
+# router bgp {64500 + as_number}
+#  bgp router-id {router_name}
+#  no bgp ebgp-requires-policy
+# """)
+#             # Add iBGP neighbors based on AS
+#             if router_name[2] in ['a', 'b', 'c', 'd']:
+#                 for peer in ['a', 'b', 'c', 'd']:
+#                     if peer != router_name[2]:
+#                         f.write(f" neighbor R{as_number}{peer} remote-as {64500 + as_number}\n")
             
-            # Add eBGP neighbors
-            if router_name == "R1c":
-                f.write(" neighbor R2a remote-as 64502\n")
-            elif router_name == "R2a":
-                f.write(" neighbor R1c remote-as 64501\n")
-            elif router_name == "R2c":
-                f.write(" neighbor R3a remote-as 64503\n")
-            elif router_name == "R3a":
-                f.write(" neighbor R2c remote-as 64502\n")
+#             # Add eBGP neighbors
+#             if router_name == "R1c":
+#                 f.write(" neighbor R2a remote-as 64502\n")
+#             elif router_name == "R2a":
+#                 f.write(" neighbor R1c remote-as 64501\n")
+#             elif router_name == "R2c":
+#                 f.write(" neighbor R3a remote-as 64503\n")
+#             elif router_name == "R3a":
+#                 f.write(" neighbor R2c remote-as 64502\n")
 
 print("Starting BGP topology...")
 net = Mininet(topo=BGPTopo(), switch=LinuxBridge, controller=None)
