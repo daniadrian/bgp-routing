@@ -72,79 +72,71 @@ class BGPTopo(Topo):
         if flags.verbose:
             setLogLevel('info')
         
-        config_path = "/home/USER/bgp-routing2/bgp-routing/frr-config/%(name)s"
+        config_path = "/home/USER/bgp-routing-pre-policy/bgp-routing/frr-config/%(name)s"
         privateDirs = [('/var/log'),
                       ('/etc/frr', config_path),
                       ('/var/run'),
                       '/var/mn']
 
         # AS1 Routers
-        R1a = self.addNode("R1a", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R1b = self.addNode("R1b", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R1c = self.addNode("R1c", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R1d = self.addNode("R1d", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R11 = self.addNode("R11", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R12 = self.addNode("R12", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R13 = self.addNode("R13", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R14 = self.addNode("R14", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
 
         # AS2 Routers
-        R2a = self.addNode("R2a", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R2b = self.addNode("R2b", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R2c = self.addNode("R2c", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R2d = self.addNode("R2d", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R21 = self.addNode("R21", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R22 = self.addNode("R22", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R23 = self.addNode("R23", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R24 = self.addNode("R24", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
 
         # # AS3 Routers
-        R3a = self.addNode("R3a", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R3b = self.addNode("R3b", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R3c = self.addNode("R3c", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
-        R3d = self.addNode("R3d", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R31 = self.addNode("R31", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R32 = self.addNode("R32", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R33 = self.addNode("R33", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
+        R34 = self.addNode("R34", cls=LinuxRouter, ip=None, privateDirs=privateDirs)
 
         # # Switch
-        # S11 = self.addSwitch("S11", inNamespace=True)
-        # S22 = self.addSwitch("S22", inNamespace=True)
-        # S33 = self.addSwitch("S33", inNamespace=True)
+        S11 = self.addSwitch("S11", inNamespace=True)
+        S22 = self.addSwitch("S22", inNamespace=True)
+        S33 = self.addSwitch("S33", inNamespace=True)
 
-        # # Host
-        # C11= self.addHost('C11', ip="172.16.1.2/24", defaultRoute="via 172.16.1.1")
-        # C22= self.addHost('C22', ip="172.17.1.2/24", defaultRoute="via 172.17.1.1")
-        # C33= self.addHost('C33', ip="172.18.1.2/24", defaultRoute="via 172.18.1.1")
+        # Host
+        C11= self.addHost('C11', ip="172.16.1.2/24", defaultRoute="via 172.16.1.1")
+        C22= self.addHost('C22', ip="172.17.1.2/24", defaultRoute="via 172.17.1.1")
+        C33= self.addHost('C33', ip="172.18.1.2/24", defaultRoute="via 172.18.1.1")
 
         # Internal links for AS1 (iBGP full mesh)
-        self.addLink(R1a, R1b, intfName1="R1a-eth0", intfName2="R1b-eth0")
-        self.addLink(R1a, R1c, intfName1="R1a-eth1", intfName2="R1c-eth0")
-        # self.addLink(R1a, R1d, intfName1="R1a-eth1", intfName2="R1d-eth0")
-        # self.addLink(R1b, R1c, intfName1="R1b-eth1", intfName2="R1c-eth1")
-        self.addLink(R1b, R1d, intfName1="R1b-eth1", intfName2="R1d-eth0")
-        self.addLink(R1c, R1d, intfName1="R1c-eth1", intfName2="R1d-eth1")
+        self.addLink(R11, R12, intfName1="R11-eth0", intfName2="R12-eth0")
+        self.addLink(R11, R13, intfName1="R11-eth1", intfName2="R13-eth0")
+        self.addLink(R12, R14, intfName1="R12-eth1", intfName2="R14-eth0")
+        self.addLink(R13, R14, intfName1="R13-eth1", intfName2="R14-eth1")
 
     #     # Internal links for AS2 (iBGP full mesh)
-        self.addLink(R2a, R2b, intfName1="R2a-eth0", intfName2="R2b-eth0")
-        self.addLink(R2a, R2c, intfName1="R2a-eth1", intfName2="R2c-eth0")
-    #   #  self.addLink(R2a, R2d, intfName1="R2a-eth1", intfName2="R2d-eth0")
-    #   #  self.addLink(R2b, R2c, intfName1="R2b-eth1", intfName2="R2c-eth1")
-        self.addLink(R2b, R2d, intfName1="R2b-eth1", intfName2="R2d-eth0")
-        self.addLink(R2c, R2d, intfName1="R2c-eth1", intfName2="R2d-eth1")
+        self.addLink(R21, R22, intfName1="R21-eth0", intfName2="R22-eth0")
+        self.addLink(R21, R23, intfName1="R21-eth1", intfName2="R23-eth0")
+        self.addLink(R22, R24, intfName1="R22-eth1", intfName2="R24-eth0")
+        self.addLink(R23, R24, intfName1="R23-eth1", intfName2="R24-eth1")
 
     #     # Internal links for AS3 (iBGP full mesh)
-        self.addLink(R3a, R3b, intfName1="R3a-eth0", intfName2="R3b-eth0")
-        self.addLink(R3a, R3c, intfName1="R3a-eth1", intfName2="R3c-eth0")
-    #   #  self.addLink(R3a, R3d, intfName1="R3a-eth1", intfName2="R3d-eth0")
-    #   #  self.addLink(R3b, R3c, intfName1="R3b-eth1", intfName2="R3c-eth1")
-        self.addLink(R3b, R3d, intfName1="R3b-eth1", intfName2="R3d-eth0")
-        self.addLink(R3c, R3d, intfName1="R3c-eth1", intfName2="R3d-eth1")
+        self.addLink(R31, R32, intfName1="R31-eth0", intfName2="R32-eth0")
+        self.addLink(R31, R33, intfName1="R31-eth1", intfName2="R33-eth0")
+        self.addLink(R32, R34, intfName1="R32-eth1", intfName2="R34-eth0")
+        self.addLink(R33, R34, intfName1="R33-eth1", intfName2="R34-eth1")
 
         # # eBGP links between ASes
-        self.addLink(R1d, R2b, intfName1="R1d-eth2", intfName2="R2b-eth2")
-        self.addLink(R1a, R3a, intfName1="R1a-eth2", intfName2="R3a-eth2")
-        self.addLink(R2c, R3d, intfName1="R2c-eth2", intfName2="R3d-eth2")
-        # self.addLink(R1c, R2a, intfName1="R1c-eth3", intfName2="R2a-eth3")  # AS1 - AS2
-        # self.addLink(R2c, R3a, intfName1="R2c-eth3", intfName2="R3a-eth3")  # AS2 - AS3
+        self.addLink(R14, R22, intfName1="R14-eth2", intfName2="R22-eth2")
+        self.addLink(R11, R31, intfName1="R11-eth2", intfName2="R31-eth2")
+        self.addLink(R23, R34, intfName1="R23-eth2", intfName2="R34-eth2")
 
-        # self.addLink(S11, R1b, intfName2="R1b-eth2")
-        # self.addLink(S11, C11)
+        self.addLink(S11, R12, intfName2="R12-eth2")
+        self.addLink(S11, C11)
 
-        # self.addLink(S22, R2a, intfName2="R2a-eth2")
-        # self.addLink(S22, C22)
+        self.addLink(S22, R21, intfName2="R21-eth2")
+        self.addLink(S22, C22)
 
-        # self.addLink(S33, R3c, intfName2="R3c-eth2")
-        # self.addLink(S33, C33)
+        self.addLink(S33, R33, intfName2="R33-eth2")
+        self.addLink(S33, C33)
 
         if flags.generateConfig or not Path.exists(Path(config_path % {"name": ""})):
             print("Generating configuration files...")
@@ -172,14 +164,14 @@ class BGPTopo(Topo):
 #                         f.write(f" neighbor R{as_number}{peer} remote-as {64500 + as_number}\n")
             
 #             # Add eBGP neighbors
-#             if router_name == "R1c":
-#                 f.write(" neighbor R2a remote-as 64502\n")
-#             elif router_name == "R2a":
-#                 f.write(" neighbor R1c remote-as 64501\n")
-#             elif router_name == "R2c":
-#                 f.write(" neighbor R3a remote-as 64503\n")
-#             elif router_name == "R3a":
-#                 f.write(" neighbor R2c remote-as 64502\n")
+#             if router_name == "R13":
+#                 f.write(" neighbor R21 remote-as 64502\n")
+#             elif router_name == "R21":
+#                 f.write(" neighbor R13 remote-as 64501\n")
+#             elif router_name == "R23":
+#                 f.write(" neighbor R31 remote-as 64503\n")
+#             elif router_name == "R31":
+#                 f.write(" neighbor R23 remote-as 64502\n")
 
 print("Starting BGP topology...")
 net = Mininet(topo=BGPTopo(), switch=LinuxBridge, controller=None)
